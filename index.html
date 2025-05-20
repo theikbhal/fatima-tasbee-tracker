@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fatima Tasbee Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 10px;
+      margin: 0;
+      font-size: 14px;
+      background: #f9f9f9;
+    }
+    h2 {
+      margin: 10px 0;
+      font-size: 18px;
+      text-align: center;
+    }
+    .counter {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 8px 0;
+      padding: 8px;
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 0 4px rgba(0,0,0,0.1);
+    }
+    button {
+      padding: 4px 8px;
+      font-size: 14px;
+      margin: 0 4px;
+    }
+    .date-picker, .confirm {
+      margin: 10px 0;
+      width: 100%;
+    }
+    .info {
+      margin-top: 20px;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Fatima Tasbee Tracker</h2>
+
+  <label for="date">Date:</label>
+  <input type="date" id="date" class="date-picker" />
+
+  <div class="counter">
+    <span>Subhanallah (33)</span>
+    <div>
+      <button onclick="updateCount('subhanallah', -1)">-</button>
+      <span id="subhanallah">0</span>
+      <button onclick="updateCount('subhanallah', 1)">+</button>
+    </div>
+  </div>
+
+  <div class="counter">
+    <span>Alhamdulillah (33)</span>
+    <div>
+      <button onclick="updateCount('alhamdulillah', -1)">-</button>
+      <span id="alhamdulillah">0</span>
+      <button onclick="updateCount('alhamdulillah', 1)">+</button>
+    </div>
+  </div>
+
+  <div class="counter">
+    <span>Allahu Akbar (34)</span>
+    <div>
+      <button onclick="updateCount('allahuakbar', -1)">-</button>
+      <span id="allahuakbar">0</span>
+      <button onclick="updateCount('allahuakbar', 1)">+</button>
+    </div>
+  </div>
+
+  <button class="confirm" onclick="saveData()">Confirm & Save</button>
+
+  <div class="info">
+    <strong>Why:</strong> To follow the Sunnah and daily remembrance of Allah<br/>
+    <strong>What:</strong> Subhanallah 33, Alhamdulillah 33, Allahu Akbar 34<br/>
+    <strong>How:</strong> Say with sincerity and count mentally or via this app<br/>
+    <strong>Frequency:</strong> Daily after every prayer or before sleeping<br/>
+    <strong>When:</strong> Preferably after Isha or any quiet moment during the day
+  </div>
+
+  <script>
+    const defaultCounts = {
+      subhanallah: 0,
+      alhamdulillah: 0,
+      allahuakbar: 0
+    };
+
+    function getDateKey() {
+      return document.getElementById('date').value;
+    }
+
+    function updateCount(key, delta) {
+      const el = document.getElementById(key);
+      let val = parseInt(el.innerText) + delta;
+      if (val < 0) val = 0;
+      el.innerText = val;
+    }
+
+    function saveData() {
+      const dateKey = getDateKey();
+      const data = {
+        subhanallah: parseInt(document.getElementById('subhanallah').innerText),
+        alhamdulillah: parseInt(document.getElementById('alhamdulillah').innerText),
+        allahuakbar: parseInt(document.getElementById('allahuakbar').innerText),
+      };
+      localStorage.setItem('tasbee-' + dateKey, JSON.stringify(data));
+      alert('Tasbee count saved for ' + dateKey);
+    }
+
+    function loadData() {
+      const dateKey = getDateKey();
+      const saved = localStorage.getItem('tasbee-' + dateKey);
+      if (saved) {
+        const data = JSON.parse(saved);
+        for (const key in data) {
+          document.getElementById(key).innerText = data[key];
+        }
+      } else {
+        for (const key in defaultCounts) {
+          document.getElementById(key).innerText = 0;
+        }
+      }
+    }
+
+    // Set default date to today
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('date').value = today;
+    document.getElementById('date').addEventListener('change', loadData);
+
+    window.onload = loadData;
+  </script>
+
+</body>
+</html>
